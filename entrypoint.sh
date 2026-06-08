@@ -12,7 +12,7 @@ python -u manage.py migrate --no-input
 python -u manage.py collectstatic --no-input --clear
 
 exec gunicorn todoproject.wsgi:application \
-    --bind 0.0.0.0:8000 \
+    --bind 0.0.0.0:${PORT:-8000} \
     --workers 3 \
     --timeout 120 \
     --access-logfile - \
