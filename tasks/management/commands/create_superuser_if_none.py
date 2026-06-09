@@ -4,15 +4,19 @@ from decouple import config
 
 
 class Command(BaseCommand):
-    help = 'Create superuser from environment variables if not exists'
+    help = 'Create or update superuser from environment variables'
 
     def handle(self, *args, **kwargs):
         username = config('DJANGO_SUPERUSER_USERNAME', default='admin')
         email = config('DJANGO_SUPERUSER_EMAIL', default='admin@example.com')
         password = config('DJANGO_SUPERUSER_PASSWORD', default='admin123')
 
-        if not User.objects.filter(username=username).exists():
-            User.objects.create_superuser(username=username, email=email, password=password)
-            self.stdout.write(self.style.SUCCESS(f'Superuser "{username}" created.'))
-        else:
-            self.stdout.write(f'Superuser "{username}" already exists.')
+        user, created = User.objects.get_or_create(username=username)
+        user.email = email
+        user.is_staff = True
+        user.is_superuser = True
+        user.set_password(password)
+        user.save()
+
+        action = 'created' if created else 'updated'
+        self.stdout.write(self.style.SUCCESS(f'Superuser "{username}" {action}.'))
