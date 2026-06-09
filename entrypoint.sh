@@ -16,6 +16,7 @@ done
 echo "PostgreSQL is ready."
 
 python -u manage.py migrate --no-input
+python -u manage.py create_superuser_if_none
 python -u manage.py collectstatic --no-input --clear
 
 exec gunicorn todoproject.wsgi:application \
