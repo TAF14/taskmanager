@@ -9,6 +9,11 @@
                 <p class="mb-0">Sign in to your account</p>
             </div>
             <div class="card-body p-4">
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+                </div>
+                {% endif %}
                 <form method="post">
                     {% csrf_token %}
                     {% for field in form %}

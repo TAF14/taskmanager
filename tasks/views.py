@@ -63,6 +63,7 @@ def task_list(request):
         'status_filter': status_filter,
         'total': tasks.count(),
         'done': tasks.filter(completed=True).count(),
+        'pending': tasks.filter(completed=False).count(),
     }
     return render(request, 'tasks/task_list.html', context)
 
