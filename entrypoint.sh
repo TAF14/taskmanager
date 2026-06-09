@@ -1,8 +1,15 @@
 #!/bin/sh
 set -e
 
-echo "Waiting for PostgreSQL at $DB_HOST:$DB_PORT..."
-until python -c "import psycopg2, os; psycopg2.connect(host=os.environ['DB_HOST'],port=os.environ.get('DB_PORT','5432'),user=os.environ['DB_USER'],password=os.environ['DB_PASSWORD'],dbname=os.environ['DB_NAME'])" 2>/dev/null; do
+echo "Waiting for PostgreSQL..."
+until python -c "
+import psycopg2, os
+url = os.environ.get('DATABASE_URL')
+if url:
+    psycopg2.connect(url)
+else:
+    psycopg2.connect(host=os.environ['DB_HOST'],port=os.environ.get('DB_PORT','5432'),user=os.environ['DB_USER'],password=os.environ['DB_PASSWORD'],dbname=os.environ['DB_NAME'])
+" 2>/dev/null; do
     sleep 1
 done
 
